@@ -28,6 +28,13 @@ async function run() {
     const database = client.db("paperCraft");
     const userData = database.collection("userData");
 
+    app.get('/getItems',async(req,res)=>{
+      const collectData = userData.find();
+      const result = await collectData.toArray();
+
+      res.send(result);
+    })
+
     app.post('/addItem',async (req,res)=>{
         const info = req.body;
         const result= await userData.insertOne(info);
