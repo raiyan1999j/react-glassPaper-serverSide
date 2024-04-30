@@ -100,6 +100,17 @@ async function run() {
 
       res.send(result)
     })
+
+    // remove item from user
+
+    app.delete('/removeItem/:id',async(req,res)=>{
+      const userId = req.params.id;
+      const query = {_id: new ObjectId(`${userId}`)};
+
+      const result= await userData.deleteOne(query);
+
+      console.log(result);
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
