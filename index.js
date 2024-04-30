@@ -45,7 +45,16 @@ async function run() {
 
       res.send(result)
     })
-    
+    // get sub-category data
+    app.get('/subCategoryPage/:category',async(req,res)=>{
+      const item = req.params.category;
+      const query= {subItem:`${item}`};
+
+      const collectData = userData.find(query);
+      const result = await collectData.toArray();
+
+      res.send(result);
+    })
     // user based data
     app.get('/myItem/:name',async(req,res)=>{
       const name = req.params.name;
