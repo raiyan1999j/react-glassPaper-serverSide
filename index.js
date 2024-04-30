@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors= require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@cluster0.sqywi72.mongodb.net/?retryWrites=true&w=majority`;
 const port= process.env.PORT || 5000;
 
@@ -28,6 +28,7 @@ async function run() {
     const database = client.db("paperCraft");
     const userData = database.collection("userData");
 
+    // get all data
     app.get('/getItems',async(req,res)=>{
       const collectData = userData.find();
       const result = await collectData.toArray();
@@ -35,6 +36,28 @@ async function run() {
       res.send(result);
     })
 
+    // get specific data for details page
+    app.get('/getDetails/:id',async (req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(`${id}`)};
+
+      const result = await userData.findOne(query);
+
+      res.send(result)
+    })
+    
+    // user based data
+    app.get('/myItem/:name',async(req,res)=>{
+      const name = req.params.name;
+      const query= {owner:`${name}`};
+
+      const collectData = userData.find(query);
+      const result = await collectData.toArray();
+
+      res.send(result);
+    })
+
+    // post data from add items page
     app.post('/addItem',async (req,res)=>{
         const info = req.body;
         const result= await userData.insertOne(info);
