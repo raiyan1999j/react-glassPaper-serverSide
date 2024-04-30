@@ -57,12 +57,48 @@ async function run() {
       res.send(result);
     })
 
+    // get data for update
+    app.get('/getSpecific/:id',async (req,res)=>{
+      const userId = req.params.id;
+      const query = {_id: new ObjectId(`${userId}`)};
+
+      const result = await userData.findOne(query);
+
+      res.send(result);
+    })
     // post data from add items page
     app.post('/addItem',async (req,res)=>{
         const info = req.body;
         const result= await userData.insertOne(info);
 
         res.send(result);
+    })
+    // update user data
+    app.put('/updateInfo/:id',async (req,res)=>{
+      const userId = req.params.id;
+      const updateData = req.body;
+      const query = {_id: new ObjectId(`${userId}`)};
+      const option= {upsert: true};
+      
+      const updateDoc ={
+        $set:{
+          item: updateData.item,
+          subItem: updateData.subItemInfo,
+          description: updateData.description,
+          price: updateData.price,
+          rating: updateData.rating,
+          custom: updateData.customization,
+          email: updateData.email,
+          name: updateData.name,
+          stock: updateData.stockInfo,
+          imgURL: updateData.imgURL,
+          owner: updateData.owner
+        }
+      }
+
+      const result = await userData.updateOne(query,updateDoc,option)
+
+      res.send(result)
     })
   } finally {
     // Ensures that the client will close when you finish/error
