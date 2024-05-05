@@ -4,10 +4,21 @@ const app = express();
 const cors= require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_User}:${process.env.DB_Pass}@cluster0.sqywi72.mongodb.net/?retryWrites=true&w=majority`;
-const port= process.env.PORT || 5000;
+const port=  5000;
 
+// const corsConfig = {
+//   origin: ['http://localhost:5173','https://client-side-react.web.app','http://localhost:4173/'],
+//   credentials: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE']
+// }
+const corsOptions ={
+  origin:'*', 
+  credentials:true,
+  optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions))
 app.use(express.json());
-app.use(cors());
 
 // // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -21,7 +32,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     // console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -86,6 +97,7 @@ async function run() {
     app.put('/updateInfo/:id',async (req,res)=>{
       const userId = req.params.id;
       const updateData = req.body;
+
       const query = {_id: new ObjectId(`${userId}`)};
       const option= {upsert: true};
       
